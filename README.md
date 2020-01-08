@@ -6,13 +6,15 @@ Terraform module to create an AWS Assume Role Policy.
 
 ## Usage
 
+### Default
+
 ```
 module "assume_role_policies" {
   source = "git::https://github.com/a4t/terraform-aws-service-assume-role-policies.git?ref=master"
 }
 ```
 
-## Outputs
+#### Outputs
 
 ```
 output "lambda" {
@@ -35,6 +37,28 @@ lambda = {
   ]
   "Version" = "2012-10-17"
 }
+```
+
+### Minimum
+
+```
+module "assume_role_policies" {
+  source = "git::https://github.com/a4t/terraform-aws-service-assume-role-policies.git?ref=master"
+  services = [
+    "lambda",
+    "glue"
+  ]
+}
+
+output "count" {
+  value = length(module.assume_role_policies.policies)
+}
+```
+
+```
+Outputs:
+
+count = 2
 ```
 
 ## Test

@@ -1,5 +1,5 @@
 data "template_file" "policies" {
-  count    = length(local.services)
+  count    = length(var.services)
   template = <<EOF
 {
   "Version": "2012-10-17",
@@ -7,7 +7,7 @@ data "template_file" "policies" {
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "${element(local.services, count.index)}.amazonaws.com"
+        "Service": "${element(var.services, count.index)}.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
     }
@@ -16,6 +16,6 @@ data "template_file" "policies" {
 EOF
 
   vars = {
-    service_name = element(local.services, count.index)
+    service_name = element(var.services, count.index)
   }
 }

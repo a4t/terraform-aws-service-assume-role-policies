@@ -1,7 +1,3 @@
-module test {
-  source = "../"
-}
-
 data "template_file" "lambda_policies" {
   template = <<EOF
 {
@@ -36,10 +32,31 @@ data "template_file" "glue_policies" {
 EOF
 }
 
-output "lambda" {
-  value = jsondecode(module.test.policies.lambda) == jsondecode(data.template_file.lambda_policies.rendered) ? "ok" : "failures"
+module default_test {
+  source = "../"
 }
 
-output "glue" {
-  value = jsondecode(module.test.policies.lambda) == jsondecode(data.template_file.lambda_policies.rendered) ? "ok" : "failures"
+output "default_test_lambda" {
+  value = jsondecode(module.default_test.policies.lambda) == jsondecode(data.template_file.lambda_policies.rendered) ? "ok" : "failures"
+}
+
+output "default_test_glue" {
+  value = jsondecode(module.default_test.policies.glue) == jsondecode(data.template_file.glue_policies.rendered) ? "ok" : "failures"
+}
+
+module "service_select_test" {
+  source = "../"
+  services = [
+    "glue",
+    "s3",
+    "lambda"
+  ]
+}
+
+output "service_select_test_lambda" {
+  value = length(module.service_select_test.policies) == 3 ? "ok" : "failures"
+}
+
+output "service_select_test_glue" {
+  value = jsondecode(module.service_select_test.policies.glue) == jsondecode(data.template_file.glue_policies.rendered) ? "ok" : "failures"
 }
